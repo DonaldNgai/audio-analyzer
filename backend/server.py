@@ -1,15 +1,37 @@
 import os
 
 import numpy as np
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask_cors import CORS
 from keras.models import load_model
 from PIL import Image, ImageOps
+
+import openai
+
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/upload', methods=['POST'])
+def upload():
+    print("Form Data Received")
+
+    if "file" not in request.files:
+        return redirect(request.url)
+    
+    file = request.files['file']
+    if file.filename == "":
+        return redirect(request.url)
+    
+    print(file)
+
+    # audio_file = open(file, "rb")
+    # transcript = openai.Audio.transcribe("whisper-1", audio_file)
+
+    # return {"message": transcript}
+    return {"message": "SUP"}
+
+
 
 # inputSentenceLength = 10
 # # Load the model
@@ -40,6 +62,3 @@ CORS(app)
 #         word_sequence.append(next_word)
 #         current += 1
 #     return " ".join(word_sequence)
-
-def upload():
-    return {"message": "successful link"}
