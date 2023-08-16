@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios'
-const VITE_OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
+import axios from 'axios';
 
 const model = "whisper-1";
 // app.post('/api/transcribe', upload.single('file'), async (req, res) => {
@@ -38,7 +37,6 @@ const PredictApp = () => {
   const onChange = e => {
     setFile(e.target.files[0]);
     setFileName(e.target.files[0].name);
-    alert("Hello")
   };
 
   const fetchAudioFile = async () =>{
@@ -48,13 +46,15 @@ const PredictApp = () => {
     console.log(file);
     console.log("Sending");
 
+    
+
     axios.post(
       "https://api.openai.com/v1/audio/transcriptions",
       formData,
       {
         headers: {
           "Content-Type" : "multipart/form-data",
-          Authorization: `Bearer ${VITE_OPENAI_API_KEY}`,
+          // Authorization: `Bearer ${VITE_OPENAI_API_KEY}`,
 
         },
 
@@ -71,17 +71,31 @@ const PredictApp = () => {
 
   const onSubmit = async e => {
     e.preventDefault();
-    alert("in Submit");
-    fetchAudioFile();
+    // fetchAudioFile();
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const config = {
+      headers: {
+          'content-type': 'multipart/form-data'
+      }
+    };
+
+    axios.post(
+      'http://localhost:5000/upload',
+      formData,
+      config,
+    )
     // fetch('http://localhost:5000/upload', {
     //   method: 'POST',
     //   body: formData
     // })
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     console.log(data);
-    //     setPrediction(data);
-    //   });
+      // .then(res => res.json())
+      // .then(data => {
+      //   console.log(data);
+      //   setPrediction(data);
+      // });
   };
 
   return (
@@ -104,7 +118,8 @@ const PredictApp = () => {
           className='btn btn-primary btm-block mt-4'
         />
       </form>
-      {prediction && <h1>{prediction.message}</h1>}
+      {/* {prediction && <h1>{prediction.message}</h1>} */}
+      {response && <h1>{JSON.stringify(response, null, 2)}</h1>}
     </div>
   );
 };

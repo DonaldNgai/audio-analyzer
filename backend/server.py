@@ -5,9 +5,10 @@ from flask import Flask, request, redirect
 from flask_cors import CORS
 from keras.models import load_model
 from PIL import Image, ImageOps
+import tempfile
 
 import openai
-
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 CORS(app)
@@ -24,9 +25,16 @@ def upload():
         return redirect(request.url)
     
     # print(file)
+    filename, file_extension = os.path.splitext(file.filename)
+    temp = tempfile.NamedTemporaryFile(suffix=file_extension)
+    print(temp.name)
+    file.save(temp)
 
-    # audio_file = open(file, "rb")
-    audio_file = file.read()
+    audio_file = open(temp.name, "rb")
+    # # audio_file = file.read()
+    # print (os.getenv("OPENAI_API_KEY"))
+    # for key, value in os.environ.items():
+    #     print('{}: {}'.format(key, value))
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     print (transcript)
     # return {"message": transcript}
