@@ -23,11 +23,12 @@ def upload():
     if file.filename == "":
         return redirect(request.url)
     
-    print(file)
+    # print(file)
 
     # audio_file = open(file, "rb")
-    # transcript = openai.Audio.transcribe("whisper-1", audio_file)
-
+    audio_file = file.read()
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    print (transcript)
     # return {"message": transcript}
     return {"message": "SUP"}
 
