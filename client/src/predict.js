@@ -17,6 +17,8 @@ const getTranscription = async (audioFile) => {
   // e.preventDefault();
   // fetchAudioFile();
 
+  console.log("Getting audio file transcription")
+
   const formData = new FormData();
   formData.append('file', audioFile);
 
@@ -26,11 +28,17 @@ const getTranscription = async (audioFile) => {
     }
   };
 
-  axios.post(
+  await axios.post(
     'http://localhost:5000/upload',
     formData,
     config,
   )
+  .then((res) => {
+    console.log(res.data);
+    return res.data
+  })
+
+  
 };
 
 export default getTranscription

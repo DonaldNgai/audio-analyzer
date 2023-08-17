@@ -2,11 +2,8 @@ import React, {useCallback, useState, useRef} from 'react';
 import {DndProvider} from "react-dnd"
 import {HTML5Backend} from "react-dnd-html5-backend";
 import {TouchBackend} from "react-dnd-touch-backend";
-import { useDrag, useDrop } from "react-dnd";
-import update from "immutability-helper";
 import getTranscription from './predict';
 import './DragnDropApp.css';
-// import getFileObjectFromLocalPath from 'get-file-object-from-local-path';
 
 // Import the useDropzone hooks from react-dropzone
 import { useDropzone } from "react-dropzone"
@@ -81,21 +78,10 @@ function handleOnDrop(droppedFiles)
 
     droppedFiles.map(file => {
         // Initialize FileReader Browser API
-        const reader = new FileReader();
         // This callback function gets called
         // after the file is read
         console.log(`Reading ${file.name}`)
-        reader.onload = function (e)
-        {
-            // add the image into the state. 
-            // Since FileReader reading process is asynchronous, 
-            // its better to get the latest snapshot state (i.e., prevState) 
-            // and update it. 
-            // setImages(prevState => [ ...prevState, { id: cuid(), src: e.target.result }]);
-            // console.log("Read. Setting images");
-            getTranscription(file)
-            
-        };
+        getTranscription(file)
         // // Read the file as Data URL (since we accept only images)
         // reader.readAsDataURL(file);
         // console.log(file);

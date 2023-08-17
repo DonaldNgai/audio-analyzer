@@ -37,8 +37,8 @@ def upload():
     #     print('{}: {}'.format(key, value))
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     print (transcript)
-    # return {"message": transcript}
-    return {"message": "SUP"}
+    return {"message": transcript}
+    # return {"message": "SUP"}
 
 
 
