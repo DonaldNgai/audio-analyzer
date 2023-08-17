@@ -1,4 +1,11 @@
 {
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false,
+    "net": false, 
+    "tls": false 
+  },
   "name": "basicreact",
   "version": "0.1.0",
   "private": true,
@@ -8,6 +15,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
     "cuid": "^3.0.0",
+    "get-file-object-from-local-path": "^1.0.2",
     "immutability-helper": "^3.1.1",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",

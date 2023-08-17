@@ -6,6 +6,7 @@ import { useDrag, useDrop } from "react-dnd";
 import update from "immutability-helper";
 import getTranscription from './predict';
 import './DragnDropApp.css';
+// import getFileObjectFromLocalPath from 'get-file-object-from-local-path';
 
 // Import the useDropzone hooks from react-dropzone
 import { useDropzone } from "react-dropzone"
@@ -20,10 +21,15 @@ let acceptedFormats = ['m4a', 'mp3', 'webm', 'mp4', 'mpga', 'wav', 'mpeg', 'ogg'
 //#region Helper Functions 
 
 // Function to allow easy debugging as we can upload an image by clicking a button
-const addFileFromButtonPress = async (path, images) => {
+const addFileFromButtonPress = async (path) => {
+    // const fileData = new getFileObjectFromLocalPath.LocalFileData(path)
+    // const file = getFileObjectFromLocalPath.constructFileFromLocalFileData(fileData)
+    // The handleOnDrop funciton expects a list of file objects.
+    // The following two lines reads the file at the path and puts it into a blob oject.
     const resp = await fetch(path);
     const blob = await resp.blob();
-    handleOnDrop([blob], images);
+    var file = new File([blob], path.replace(/^.*[\\\/]/, ''));
+    handleOnDrop([file]);
 }
 
 
@@ -68,11 +74,12 @@ const Dropzone = ({ onDrop, accept }) => {
 
 };
 
-function handleOnDrop(acceptedFiles, images)
+function handleOnDrop(droppedFiles)
 {
     console.log("Handle onDrop")
+    console.log(droppedFiles)
 
-    acceptedFiles.map(file => {
+    droppedFiles.map(file => {
         // Initialize FileReader Browser API
         const reader = new FileReader();
         // This callback function gets called
@@ -104,11 +111,11 @@ function DropAudioApp(){
 
     // let blob = getFileBlob("logo192.png");
     // let blob = new File("./logo192.png")
-    let filePath = "./logo192.png"
+    let filePath = "./84-121123-0000.flac"
 
-    const onDropFunction = useCallback(acceptedFiles => {
+    const onDropFunction = useCallback(droppedFiles => {
         // this callback will be called after files get dropped, we will get the acceptedFiles. If you want, you can even access the rejected files too
-        handleOnDrop(acceptedFiles, images);
+        handleOnDrop(droppedFiles);
     }, []);
 
     // We pass onDrop function and accept prop to the component. It will be used as initial params for useDropzone hook
@@ -116,7 +123,7 @@ function DropAudioApp(){
         <main className="App">
             <h1 className="text-center">Drag and Drop Example</h1>
             <Dropzone onDrop={onDropFunction} accept={acceptedFormats} />
-            <button onClick={() => addFileFromButtonPress(filePath, images)}>Add Audio File</button>
+            <button onClick={() => addFileFromButtonPress(filePath)}>Add Audio File</button>
             <DndProvider backend={backendForDND}>
                 
             </DndProvider>
