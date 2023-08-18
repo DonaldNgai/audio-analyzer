@@ -8,9 +8,7 @@ import './DragnDropApp.css';
 // Import the useDropzone hooks from react-dropzone
 import { useDropzone } from "react-dropzone"
 // Import cuid which allows easy Unique ID generation
-import cuid from "cuid"
 // Need to pass which type element can be draggable, its a simple string or Symbol. This is like an Unique ID so that the library know what type of element is dragged or dropped on.
-const dragType = "Image";
 let acceptedFormats = ['m4a', 'mp3', 'webm', 'mp4', 'mpga', 'wav', 'mpeg', 'ogg', 'oga', 'flac'];
 
 
@@ -90,7 +88,6 @@ function handleOnDrop(droppedFiles) {
 
 function DropAudioApp() {
     // This can't be globally defined as it is a react hook so it must exist within function
-    const [images, setImages] = useState([]);
     // Assigning backend based on touch support on the device
     const backendForDND = isTouchDevice() ? TouchBackend : HTML5Backend;
 

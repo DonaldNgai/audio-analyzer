@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import ReceiveAudioApp from './DragnDropApp'; // Imports App.js and css and stuff
+// import LiveTranscriptApp from './LiveTranscript'; // Imports App.js and css and stuff
 import reportWebVitals from './reportWebVitals';
 
 // Script entry
@@ -9,8 +10,9 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // This indicates specific checks are to be ran for App whenever compiles
-  <React.StrictMode> 
+  <React.StrictMode>
     <ReceiveAudioApp />
+    {/* <LiveTranscriptApp /> */}
   </React.StrictMode>
 );
 
