@@ -1,7 +1,7 @@
-import React, {useCallback, useState, useRef} from 'react';
-import {DndProvider} from "react-dnd"
-import {HTML5Backend} from "react-dnd-html5-backend";
-import {TouchBackend} from "react-dnd-touch-backend";
+import React, { useCallback, useState, useRef } from 'react';
+import { DndProvider } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { TouchBackend } from "react-dnd-touch-backend";
 import getTranscription from './predict';
 import './DragnDropApp.css';
 
@@ -10,7 +10,7 @@ import { useDropzone } from "react-dropzone"
 // Import cuid which allows easy Unique ID generation
 import cuid from "cuid"
 // Need to pass which type element can be draggable, its a simple string or Symbol. This is like an Unique ID so that the library know what type of element is dragged or dropped on.
-const dragType = "Image"; 
+const dragType = "Image";
 let acceptedFormats = ['m4a', 'mp3', 'webm', 'mp4', 'mpga', 'wav', 'mpeg', 'ogg', 'oga', 'flac'];
 
 
@@ -34,10 +34,10 @@ const addFileFromButtonPress = async (path) => {
 
 // simple way to check whether the device support touch (it doesn't check all fallback, it supports only modern browsers)
 const isTouchDevice = () => {
-  if ("ontouchstart" in window) {
-    return true;
-  }
-  return false;
+    if ("ontouchstart" in window) {
+        return true;
+    }
+    return false;
 };
 
 //#endregion
@@ -59,11 +59,11 @@ const Dropzone = ({ onDrop, accept }) => {
             <input className="dropzone-input" {...getInputProps()} />
             <div className="text-center">
                 {isDragActive ? (
-                  <p className="dropzone-content">Release to drop the files here</p>
+                    <p className="dropzone-content">Release to drop the files here</p>
                 ) : (
-                  <p className="dropzone-content">
-                    Drag 'n' drop some files here, or click to select files
-                  </p>
+                    <p className="dropzone-content">
+                        Drag 'n' drop some files here, or click to select files
+                    </p>
                 )}
             </div>
         </div>
@@ -71,8 +71,7 @@ const Dropzone = ({ onDrop, accept }) => {
 
 };
 
-function handleOnDrop(droppedFiles)
-{
+function handleOnDrop(droppedFiles) {
     console.log("Handle onDrop")
     console.log(droppedFiles)
 
@@ -89,9 +88,9 @@ function handleOnDrop(droppedFiles)
     }, []);
 }
 
-function DropAudioApp(){
+function DropAudioApp() {
     // This can't be globally defined as it is a react hook so it must exist within function
-    const [images, setImages] = useState([]); 
+    const [images, setImages] = useState([]);
     // Assigning backend based on touch support on the device
     const backendForDND = isTouchDevice() ? TouchBackend : HTML5Backend;
 
@@ -111,7 +110,7 @@ function DropAudioApp(){
             <Dropzone onDrop={onDropFunction} accept={acceptedFormats} />
             <button onClick={() => addFileFromButtonPress(filePath)}>Add Audio File</button>
             <DndProvider backend={backendForDND}>
-                
+
             </DndProvider>
         </main>
     );
