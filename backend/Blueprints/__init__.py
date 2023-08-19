@@ -9,9 +9,12 @@ def create_app(config_class=Config):
     # Initialize Flask extensions here
     
     # Register blueprints here
-    from appFactory.main import bp as main_bp
-    app.register_blueprint(main_bp)
-    
+    from Blueprints.main import bp as main_bp
+    app.register_blueprint(main_bp, url_prefix="/")
+
+    from Blueprints.transcriptApi import transcript_api_bp as transcript_api_bp
+    app.register_blueprint(transcript_api_bp, url_prefix="/api")
+
     # Test route
     @app.route('/test/')
     def test_page():

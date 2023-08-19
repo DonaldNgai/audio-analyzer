@@ -1,2 +1,3 @@
-FLASK_APP=appFactory
+FLASK_APP=Blueprints
 FLASK_ENV=development
+FLASK_DEBUG=1
