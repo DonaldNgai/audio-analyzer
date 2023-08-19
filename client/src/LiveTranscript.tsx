@@ -1,4 +1,5 @@
 import { useWhisper } from '@chengsokdara/use-whisper'
+import axios from 'axios';
 
 const LiveTranscriptApp = () => {
     // const getTranscription = async (audioFile) => {
@@ -40,7 +41,6 @@ const LiveTranscriptApp = () => {
         )
         const body = JSON.stringify({ file: base64, model: 'whisper-1' })
         const headers = { 'Content-Type': 'application/json' }
-        const { default: axios } = await import('axios')
         const response = await axios.post('/api/whisper', body, {
             headers,
         })
@@ -63,6 +63,7 @@ const LiveTranscriptApp = () => {
     } = useWhisper({
         // callback to handle transcription with custom server
         onTranscribe: onTranscribe,
+        // customServer: "",
         apiKey: process.env.REACT_APP_OPENAI_API_KEY, // YOUR_OPEN_AI_TOKEN
         // streaming: true,
         // timeSlice: 1_000, // 1 second
