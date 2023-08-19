@@ -12,6 +12,7 @@ def add(num1, num2):
 
 @transcript_api_bp.route("/go_to_main")
 def go_to_main():
+    # The name of the blueprint is based on the folder it's defined in
     return redirect(url_for("main.index")) # main, and then function name which is index in routes.py
 
 
