@@ -26,27 +26,23 @@ def go_to_main():
 
 @transcript_api_bp.route('/file', methods=['POST'])
 def upload():
-    # print("Form Data Received")
+    print("Form Data Received")
 
-    # if "file" not in request.files:
-    #     return redirect(request.url)
+    if "file" not in request.files:
+        return redirect(request.url)
     
-    # file = request.files['file']
-    # if file.filename == "":
-    #     return redirect(request.url)
+    file = request.files['file']
+    if file.filename == "":
+        return redirect(request.url)
     
-    # # print(file)
-    # filename, file_extension = os.path.splitext(file.filename)
-    # temp = tempfile.NamedTemporaryFile(suffix=file_extension)
-    # print(temp.name)
-    # file.save(temp)
+    # print(file)
+    filename, file_extension = os.path.splitext(file.filename)
+    temp = tempfile.NamedTemporaryFile(suffix=file_extension)
+    print(temp.name)
+    file.save(temp)
 
-    # audio_file = open(temp.name, "rb")
-    # # # audio_file = file.read()
-    # # print (os.getenv("OPENAI_API_KEY"))
-    # # for key, value in os.environ.items():
-    # #     print('{}: {}'.format(key, value))
-    # transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    # print (transcript)
-    # return {"message": transcript}
-    return "This is the transcript api blueprint"
+    audio_file = open(temp.name, "rb")
+
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    print (transcript)
+    return {"message": transcript}
