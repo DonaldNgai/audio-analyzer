@@ -6,8 +6,6 @@ from flask_cors import CORS
 import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
-
 transcript_api_bp = Blueprint("transcript_api", __name__)
 CORS(transcript_api_bp)
 
@@ -24,7 +22,7 @@ def go_to_main():
     # The name of the blueprint is defined in __init__.py and that's what is referenced here
     return redirect(url_for("main.index")) # main, and then function name which is index in routes.py
 
-@transcript_api_bp.route('/file', methods=['POST'])
+@transcript_api_bp.route('/file', methods=['POST','OPTIONS'])
 def transcribe_from_file():
     print("Form Data Received")
 
@@ -47,7 +45,7 @@ def transcribe_from_file():
     print (transcript)
     return {"message": transcript}
 
-@transcript_api_bp.route('/live', methods=['POST'])
+@transcript_api_bp.route('/live', methods=['POST','OPTIONS'])
 def transcribe_from_blob():
     print ("Live transcribing")
 

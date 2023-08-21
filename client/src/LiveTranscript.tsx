@@ -1,6 +1,6 @@
 import { useWhisper } from '@chengsokdara/use-whisper'
 import axios from 'axios';
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT
+const API_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
 
 const LiveTranscriptApp = () => {
     // const getTranscription = async (audioFile) => {

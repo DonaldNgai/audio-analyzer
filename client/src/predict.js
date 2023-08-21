@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT
+
 // const model = "whisper-1";
 
 
@@ -29,7 +29,7 @@ const getTranscription = async (audioFile) => {
   };
 
   await axios.post(
-    `${API_ENDPOINT}/transcribe/file`,
+    'http://localhost:5000/upload',
     formData,
     config,
   )
