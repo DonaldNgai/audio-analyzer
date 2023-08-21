@@ -1,4 +1,5 @@
 {
+  "proxy": "http://localhost:5000",
   "browser": {
     "fs": false,
     "os": false,

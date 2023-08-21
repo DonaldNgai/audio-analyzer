@@ -25,7 +25,7 @@ def go_to_main():
     return redirect(url_for("main.index")) # main, and then function name which is index in routes.py
 
 @transcript_api_bp.route('/file', methods=['POST'])
-def upload():
+def transcribe_from_file():
     print("Form Data Received")
 
     if "file" not in request.files:
@@ -46,3 +46,17 @@ def upload():
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
     print (transcript)
     return {"message": transcript}
+
+@transcript_api_bp.route('/live', methods=['POST'])
+def transcribe_from_blob():
+    print ("Live transcribing")
+
+    if "file" not in request.files:
+        return redirect(request.url)
+    
+    file = request.files['file']
+    if file.filename == "":
+        return redirect(request.url)
+    
+    print(file)
+    return "Hello World"

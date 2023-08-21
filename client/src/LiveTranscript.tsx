@@ -1,5 +1,6 @@
 import { useWhisper } from '@chengsokdara/use-whisper'
 import axios from 'axios';
+const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT
 
 const LiveTranscriptApp = () => {
     // const getTranscription = async (audioFile) => {
@@ -41,7 +42,9 @@ const LiveTranscriptApp = () => {
         )
         const body = JSON.stringify({ file: base64, model: 'whisper-1' })
         const headers = { 'Content-Type': 'application/json' }
-        const response = await axios.post('/api/whisper', body, {
+        console.log("Sending post")
+        // Weird but there needs to be a slash at the end for axios to send this as a post request
+        const response = await axios.post(`${API_ENDPOINT}/transcribe/live/`, body, {
             headers,
         })
         const { text } = await response.data
