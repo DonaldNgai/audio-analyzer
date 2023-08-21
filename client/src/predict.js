@@ -24,21 +24,21 @@ const getTranscription = async (audioFile) => {
 
   const config = {
     headers: {
-        'content-type': 'multipart/form-data'
+      'content-type': 'multipart/form-data'
     }
   };
 
   await axios.post(
-    'http://localhost:5000/upload',
+    'http://localhost:5000/transcribe/file',
     formData,
     config,
   )
-  .then((res) => {
-    console.log(res.data);
-    return res.data
-  })
+    .then((res) => {
+      console.log(res.data);
+      return res.data
+    })
 
-  
+
 };
 
 export default getTranscription
