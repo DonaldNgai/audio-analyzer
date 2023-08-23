@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, url_for, request
 import os
 import tempfile
 from flask_cors import CORS
-import time
+import base64
 
 
 import openai
@@ -55,24 +55,33 @@ def transcribe_from_file():
 def transcribe_from_blob():
     print ("Live transcribing")
 
-    if "file" not in request.files:
-        return redirect(request.url)
+    print (request.get_json())
+    # if "file" not in request.files:
+    #     return redirect(request.url)
     
-    file = request.files['file']
-    if file.filename == "":
-        return redirect(request.url)
-
-    print (file)
-    # json_data = request.get_json()
-    # if "file" not in json_data:
+    # file = request.files['file']
+    # if file.filename == "":
     #     return redirect(request.url)
 
+    # print (file)
+    # video_stream = base64.b64decode(file.read())
+    # print(file)
+    json_data = request.get_json()
+    if "file" not in json_data:
+        return redirect(request.url)
+
+    data = json_data['file']
+    print(data)
     # wav_file = open("temp.wav", "wb")
-    # decode_string = base64.b64decode(json_data["file"])
+    # decode_string = base64.b64decode(data)
+    # f = open('./file.wav', 'wb')
+    #     f.write(request.files["audio_data"])
+    #     f.close()
+    # print(decode_string)
     # wav_file.write(decode_string)    
     # result=torch.Tensor(numpy.frombuffer(json_data["file"], dtype=numpy.int32))
     # if file.filename == "":
     #     return redirect(request.url)
-    # print (result)
+    print ("helloworld")
     
     return {"message": "Hello WOrlds"}
