@@ -72,18 +72,20 @@ const LiveTranscriptApp = () => {
         startRecording,
         stopRecording,
     } = useWhisper({
+        autoTranscribe: true, // If this is false, onTranscribe is not called. But this needs to be true in order for onDataCallback to be called
         // callback to handle transcription with custom server
-        onTranscribe: onTranscribe,
-        // onDataAvailable: onTranscribe,
-        // autoTranscribe = false, // Set this to false when we want live transcriptions. It will call onDataAvailable
+        // onTranscribe: null,
+        onDataAvailable: onTranscribe,
+        // Set this to false when we want live transcriptions. It will call onDataAvailable
         // customServer: "",
         apiKey: process.env.REACT_APP_OPENAI_API_KEY, // YOUR_OPEN_AI_TOKEN
-        // streaming: true,
-        // timeSlice: 1_000, // 1 second
+        streaming: true,
+        timeSlice: 5_000, // 1 second
         // whisperConfig: {
         //     language: 'en',
         // prompt : last text TODO: feedback audio into this
         // },
+
         removeSilence: false, // Setting this to true seems to return an empty audio clip
     })
 
