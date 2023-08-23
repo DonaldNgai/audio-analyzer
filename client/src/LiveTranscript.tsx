@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useWhisper } from '@chengsokdara/use-whisper'
 import axios from 'axios';
 const FLASK_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
 
 const LiveTranscriptApp = () => {
+    const [transcribedText, setTranscription] = useState("")
     // const getTranscription = async (audioFile) => {
     //     // e.preventDefault();
     //     // fetchAudioFile();
@@ -45,7 +47,8 @@ const LiveTranscriptApp = () => {
         console.log(audiofile)
         const config = {
             headers: {
-                'content-type': 'multipart/form-data'
+                'content-type': 'multipart/form-data',
+                responseType: 'stream'
             }
         };
 
@@ -55,19 +58,37 @@ const LiveTranscriptApp = () => {
             config,
         )
 
-        const { text } = await response.data
+        const stream = response.data
+        stream.on('data', (data: { [x: string]: any; }) => {
+            console.log(data)
+            const message = data["message"]
+            //     // const parsedJson = JSON.parse(response)
+            console.log(message)
+            setTranscription(transcribedText + " " + message)
 
-        return {
-            blob,
-            text,
-        }
+        })
+
+        stream.on('end', () => {
+            console.log("done")
+        })
+        // .then(function (response) {
+        //     const message = response.data["message"]
+        //     // const parsedJson = JSON.parse(response)
+        //     console.log(message)
+        //     setTranscription(transcribedText + " " + message)
+        // })
+
+        // const { text } = await response.data['message']
+        // console.log(response)
+
+        // return {
+        //     blob,
+        //     text,
+        // }
     }
 
     const {
         recording,
-        speaking,
-        transcribing,
-        transcript,
         pauseRecording,
         startRecording,
         stopRecording,
@@ -92,9 +113,34 @@ const LiveTranscriptApp = () => {
     return (
         <div>
             <p>Recording: {recording}</p>
-            <p>Speaking: {speaking}</p>
-            <p>Transcribing: {transcribing}</p>
-            <p>Transcribed Text: {transcript.text}</p>
+            {recording ? (
+                <p>Recording In Progress</p>
+            ) :
+                (
+                    <p>Not Recording</p>
+                )
+            }
+            {/* honestly, looking at the code, no idea what this variable is trying to show
+            it seems to just show the same info as recording */}
+            {/* {speaking ? (
+                <p>You are speaking</p>
+            ) :
+                (
+                    <p>Silence</p>
+                )
+            } */}
+            {/* transcribing doesn't mean anything since it's when onTranscribe is called but since we're doing a
+            live transcription, we call ondataavailable instead */}
+            {/* {transcribing ? (
+                <p>Transcribing</p>
+            ) :
+                (
+                    <p>Listening</p>
+                )
+            } */}
+            {/* transcribed test also doens't make sense since it's only useful if the api itself is doing the transcription */}
+            {/* <p>Transcribed Text: {transcript.text}</p> */}
+            <p>Transcribed Text: {transcribedText}</p>
             <button onClick={() => startRecording()}>Start</button>
             <button onClick={() => pauseRecording()}>Pause</button>
             <button onClick={() => stopRecording()}>Stop</button>

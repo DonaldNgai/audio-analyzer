@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, url_for, request
 import os
 import tempfile
 from flask_cors import CORS
-import base64
+import time
 
 
 import openai
@@ -45,8 +45,9 @@ def transcribe_from_file():
     file.save(file.filename)
 
     audio_file = open(temp.name, "rb")
-    transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    # transcript = "hello"
+    # transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    transcript = "hello"
+    # time.sleep(3000)
     print (transcript)
     return {"message": transcript}
 
