@@ -47,8 +47,7 @@ const LiveTranscriptApp = () => {
         console.log(audiofile)
         const config = {
             headers: {
-                'content-type': 'multipart/form-data',
-                responseType: 'stream'
+                'content-type': 'multipart/form-data'
             }
         };
 
@@ -57,26 +56,12 @@ const LiveTranscriptApp = () => {
             formData,
             config,
         )
-
-        const stream = response.data
-        stream.on('data', (data: { [x: string]: any; }) => {
-            console.log(data)
-            const message = data["message"]
-            //     // const parsedJson = JSON.parse(response)
-            console.log(message)
-            setTranscription(transcribedText + " " + message)
-
-        })
-
-        stream.on('end', () => {
-            console.log("done")
-        })
-        // .then(function (response) {
-        //     const message = response.data["message"]
-        //     // const parsedJson = JSON.parse(response)
-        //     console.log(message)
-        //     setTranscription(transcribedText + " " + message)
-        // })
+            .then(function (response) {
+                const message = response.data["message"]
+                // const parsedJson = JSON.parse(response)
+                console.log(message)
+                setTranscription(transcribedText + " " + message)
+            })
 
         // const { text } = await response.data['message']
         // console.log(response)
