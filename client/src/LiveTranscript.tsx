@@ -1,6 +1,6 @@
 import { useWhisper } from '@chengsokdara/use-whisper'
 import axios from 'axios';
-const API_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
+const FLASK_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
 
 const LiveTranscriptApp = () => {
     // const getTranscription = async (audioFile) => {
@@ -33,22 +33,30 @@ const LiveTranscriptApp = () => {
 
     const onTranscribe = async (blob: Blob) => {
 
-        const base64 = await new Promise<string | ArrayBuffer | null>(
-            (resolve) => {
-                const reader = new FileReader()
-                reader.onloadend = () => resolve(reader.result)
-                reader.readAsDataURL(blob)
+        console.log(blob)
+
+        const audiofile = new File([blob], "audiofile.mpeg", {
+            type: "audio/mpeg",
+        });
+        const formData = new FormData();
+        formData.append("file", audiofile);
+        formData.append("model", "whisper-1");
+
+        console.log(audiofile)
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
             }
+        };
+
+        const response = await axios.post(
+            `${FLASK_ENDPOINT}/transcribe/file`,
+            formData,
+            config,
         )
-        const body = JSON.stringify({ file: base64, model: 'whisper-1' })
-        const headers = { 'Content-Type': 'application/json' }
-        console.log("Sending post")
-        // Weird but there needs to be a slash at the end for axios to send this as a post request
-        const response = await axios.post(`${API_ENDPOINT}/transcribe/live/`, body, {
-            headers,
-        })
+
         const { text } = await response.data
-        // you must return result from your server in Transcript format
+
         return {
             blob,
             text,
@@ -66,14 +74,17 @@ const LiveTranscriptApp = () => {
     } = useWhisper({
         // callback to handle transcription with custom server
         onTranscribe: onTranscribe,
+        // onDataAvailable: onTranscribe,
+        // autoTranscribe = false, // Set this to false when we want live transcriptions. It will call onDataAvailable
         // customServer: "",
         apiKey: process.env.REACT_APP_OPENAI_API_KEY, // YOUR_OPEN_AI_TOKEN
         // streaming: true,
         // timeSlice: 1_000, // 1 second
         // whisperConfig: {
         //     language: 'en',
+        // prompt : last text TODO: feedback audio into this
         // },
-        removeSilence: true,
+        removeSilence: false, // Setting this to true seems to return an empty audio clip
     })
 
     return (
