@@ -58,7 +58,7 @@ def transcribe_from_blob():
     global counter
     print ("Live transcribing" + str(counter))
 
-    print (request.get_json())
+    # print (request.get_json())
     # if "file" not in request.files:
     #     return redirect(request.url)
     
@@ -74,14 +74,15 @@ def transcribe_from_blob():
         return redirect(request.url)
 
     data = json_data['file']
-    print(data)
+    # print(data)
     # wav_file = open("temp.wav", "wb")
-    # decode_string = base64.b64decode(data)
+    decode_string = base64.b64decode(data.split(',')[1])
     filename = "".join(["./file",str(counter),".mpeg"])
     print(filename)
-    # with open(filename, 'wb') as f:
-    #     f.write(data)
-    #     f.close()
+    # print(decode_string)
+    with open(filename, 'wb') as f:
+        f.write(decode_string)
+        f.close()
     # print(decode_string)
     # wav_file.write(decode_string)    
     # result=torch.Tensor(numpy.frombuffer(json_data["file"], dtype=numpy.int32))
