@@ -11,6 +11,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 transcript_api_bp = Blueprint("transcript_api", __name__)
 CORS(transcript_api_bp)
 
+counter = 0
+
 @transcript_api_bp.route("/")
 def index():
     return "This is the transcript api blueprint"
@@ -53,7 +55,8 @@ def transcribe_from_file():
 
 @transcript_api_bp.route('/live', methods=['POST'])
 def transcribe_from_blob():
-    print ("Live transcribing")
+    global counter
+    print ("Live transcribing" + str(counter))
 
     print (request.get_json())
     # if "file" not in request.files:
@@ -74,8 +77,10 @@ def transcribe_from_blob():
     print(data)
     # wav_file = open("temp.wav", "wb")
     # decode_string = base64.b64decode(data)
-    # f = open('./file.wav', 'wb')
-    #     f.write(request.files["audio_data"])
+    filename = "".join(["./file",str(counter),".mpeg"])
+    print(filename)
+    # with open(filename, 'wb') as f:
+    #     f.write(data)
     #     f.close()
     # print(decode_string)
     # wav_file.write(decode_string)    
@@ -83,5 +88,6 @@ def transcribe_from_blob():
     # if file.filename == "":
     #     return redirect(request.url)
     print ("helloworld")
+    counter+=1
     
     return {"message": "Hello WOrlds"}
