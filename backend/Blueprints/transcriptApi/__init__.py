@@ -4,7 +4,6 @@ import tempfile
 from flask_cors import CORS
 import base64
 
-
 import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -16,10 +15,6 @@ counter = 0
 @transcript_api_bp.route("/")
 def index():
     return "This is the transcript api blueprint"
-
-# @transcript_api_bp.route("/add/<int:num1>/<int:num2>")
-# def add(num1, num2):
-#     return addTwo(num1,num2)
 
 @transcript_api_bp.route("/go_to_main")
 def go_to_main():
@@ -61,7 +56,6 @@ def transcribe_from_blob():
     if "file" not in request.files:
         return redirect(request.url)
 
-    
     data = request.files['file']
     filepath = "tmp/" + data.filename
     print(filepath)
@@ -77,37 +71,20 @@ def transcribe_from_base64():
     global counter
     print ("Live Base 64 transcribing" + str(counter))
 
-    # print (request.get_json())
-    # if "file" not in request.files:
-    #     return redirect(request.url)
-    
-    # file = request.files['file']
-    # if file.filename == "":
-    #     return redirect(request.url)
-
-    # print (file)
-    # video_stream = base64.b64decode(file.read())
-    # print(file)
     json_data = request.get_json()
     if "file" not in json_data:
         return redirect(request.url)
 
     data = json_data['file']
-    # print(data)
-    # wav_file = open("temp.wav", "wb")
+    
     decode_string = base64.b64decode(data.split(',')[1])
     filename = "".join(["./file",str(counter),".mpeg"])
     print(filename)
-    # print(decode_string)
+    
     with open(filename, 'wb') as f:
         f.write(decode_string)
         f.close()
-    # print(decode_string)
-    # wav_file.write(decode_string)    
-    # result=torch.Tensor(numpy.frombuffer(json_data["file"], dtype=numpy.int32))
-    # if file.filename == "":
-    #     return redirect(request.url)
-    print ("helloworld")
+    
     counter+=1
     
     return {"message": "Hello WOrlds"}
