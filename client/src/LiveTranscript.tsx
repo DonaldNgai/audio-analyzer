@@ -124,7 +124,7 @@ const LiveTranscriptApp = () => {
         autoTranscribe: false, // If this is false, onTranscribe is not called. But this needs to be true in order for onDataCallback to be called
         // callback to handle transcription with custom server
         // onTranscribe: onTranscribe,
-        onDataAvailable: onLiveBase64,
+        onDataAvailable: onLiveBlob,
         // Set this to false when we want live transcriptions. It will call onDataAvailable
         // customServer: "",
         apiKey: process.env.REACT_APP_OPENAI_API_KEY, // YOUR_OPEN_AI_TOKEN

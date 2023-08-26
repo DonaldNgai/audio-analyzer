@@ -61,12 +61,12 @@ def transcribe_from_blob():
     if "file" not in request.files:
         return redirect(request.url)
 
-    print ("jello")
+    
     data = request.files['file']
-    print (data)
-    filename = "".join(["./file",str(counter),".mpeg"])
-    print(filename)
-    data.save(filename)
+    filepath = "tmp/" + data.filename
+    print(filepath)
+    saveTempAudioFile(filepath, data)
+    os.remove(filepath)
 
     counter+=1
     
@@ -111,3 +111,14 @@ def transcribe_from_base64():
     counter+=1
     
     return {"message": "Hello WOrlds"}
+
+
+def saveTempAudioFile(filepath, fileToSave):
+    fileDirectory = os.path.dirname(filepath)
+    isExist = os.path.exists(fileDirectory)
+    if not isExist:
+        # Create a new directory because it does not exist
+        os.makedirs(fileDirectory)
+        print("Creating tmp folder")
+
+    fileToSave.save(filepath)
