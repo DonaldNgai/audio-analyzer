@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useWhisper } from '@chengsokdara/use-whisper'
 import axios from 'axios';
+import logger from 'loglevel';
 const FLASK_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
 
 const LiveTranscriptApp = () => {
@@ -15,7 +16,7 @@ const LiveTranscriptApp = () => {
     const onLiveBase64 = async (blob: Blob) => {
 
         if (stateRef.current < maxRuns) {
-            console.log(`onLiveBase64 ${stateRef.current + 1}`)
+            logger.log(`onLiveBase64 ${stateRef.current + 1}`)
 
             const audioUrl = URL.createObjectURL(blob);
             setAudio(audioUrl);
@@ -36,7 +37,7 @@ const LiveTranscriptApp = () => {
             };
 
             updateCounter(counterHook => counterHook + 1)
-            console.log(stateRef.current)
+            logger.log(stateRef.current)
             const response = await axios.post(
                 `${FLASK_ENDPOINT}/transcribe/livebase64`,
                 body,
@@ -61,7 +62,7 @@ const LiveTranscriptApp = () => {
     const onLiveBlob = async (blob: Blob) => {
 
         if (stateRef.current < maxRuns) {
-            console.log(`onLiveBlob ${stateRef.current + 1}`)
+            logger.log(`onLiveBlob ${stateRef.current + 1}`)
 
             const audioUrl = URL.createObjectURL(blob);
             setAudio(audioUrl);
@@ -94,27 +95,6 @@ const LiveTranscriptApp = () => {
                 text,
             }
         }
-        // const stream = response.data
-        // stream.on('data', (data: { [x: string]: any; }) => {
-        //     console.log(data)
-        //     const message = data["message"]
-        //     //     // const parsedJson = JSON.parse(response)
-        //     console.log(message)
-        //     setTranscription(transcribedText + " " + message)
-
-        // })
-
-        // stream.on('end', () => {
-        //     console.log("done")
-        // })
-        // .then(function (response) {
-        //     const message = response.data["message"]
-        //     // const parsedJson = JSON.parse(response)
-        //     console.log(message)
-        //     setTranscription(transcribedText + " " + message)
-        // })
-
-        // console.log(response)
 
         return {
             blob
@@ -140,6 +120,7 @@ const LiveTranscriptApp = () => {
         //     language: 'en',1
         // removeSilence is practically useless for me. I will remove it myself in server
         removeSilence: true,
+        logSubModules: true,
     })
 
     return (
