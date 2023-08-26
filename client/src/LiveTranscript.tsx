@@ -1,41 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useWhisper } from '@chengsokdara/use-whisper'
 import axios from 'axios';
 const FLASK_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
 
 const LiveTranscriptApp = () => {
     const [transcribedText, setTranscription] = useState("")
-    const [sendCounter, updateCounter] = useState(0);
+    const [counterHook, updateCounter] = useState(0)
+    const stateRef = useRef<number>(0);
 
-    // const getTranscription = async (audioFile) => {
-    //     // e.preventDefault();
-    //     // fetchAudioFile();
-
-    //     console.log("Getting audio file transcription")
-
-    //     const formData = new FormData();
-    //     formData.append('file', audioFile);
-
-    //     const config = {
-    //       headers: {
-    //           'content-type': 'multipart/form-data'
-    //       }
-    //     };
-
-    //     await axios.post(
-    //       'http://localhost:5000/upload',
-    //       formData,
-    //       config,
-    //     )
-    //     .then((res) => {
-    //       console.log(res.data);
-    //       return res.data
-    //     })
-
-
-    //   };
-
-
+    stateRef.current = counterHook;
 
     const onTranscribe = async (blob: Blob) => {
 
@@ -60,7 +33,7 @@ const LiveTranscriptApp = () => {
             }
         };
 
-        if (sendCounter < 2) {
+        if (stateRef.current < 2) {
 
             const response = await axios.post(
                 `${FLASK_ENDPOINT}/transcribe/live`,
@@ -100,9 +73,16 @@ const LiveTranscriptApp = () => {
 
     const onLive = async (blob: Blob) => {
 
-        console.log("onLive")
-        console.log(blob)
-        if (sendCounter < 2) {
+
+        // console.log(blob)
+
+        console.log("counterHook")
+        console.log(counterHook)
+        console.log(`stateRef is ${stateRef.current}`)
+
+
+        if (stateRef.current < 2) {
+            console.log("onLive")
             const base64 = await new Promise<string | ArrayBuffer | null>(
                 (resolve) => {
                     const reader = new FileReader()
@@ -124,14 +104,14 @@ const LiveTranscriptApp = () => {
 
 
 
-
-            updateCounter((sendCounter) => sendCounter + 1)
-            const response = await axios.post(
-                `${FLASK_ENDPOINT}/transcribe/live`,
-                body,
-                config,
-            )
-            const { text } = await response.data['message']
+            updateCounter(counterHook => counterHook + 1)
+            console.log(stateRef.current)
+            // const response = await axios.post(
+            //     `${FLASK_ENDPOINT}/transcribe/live`,
+            //     body,
+            //     config,
+            // )
+            // const { text } = await response.data['message']
         }
         // const stream = response.data
         // stream.on('data', (data: { [x: string]: any; }) => {
@@ -168,21 +148,19 @@ const LiveTranscriptApp = () => {
         startRecording,
         stopRecording,
     } = useWhisper({
-        autoTranscribe: true, // If this is false, onTranscribe is not called. But this needs to be true in order for onDataCallback to be called
+        autoTranscribe: false, // If this is false, onTranscribe is not called. But this needs to be true in order for onDataCallback to be called
         // callback to handle transcription with custom server
-        onTranscribe: onTranscribe,
+        // onTranscribe: onTranscribe,
         onDataAvailable: onLive,
         // Set this to false when we want live transcriptions. It will call onDataAvailable
         // customServer: "",
         apiKey: process.env.REACT_APP_OPENAI_API_KEY, // YOUR_OPEN_AI_TOKEN
         streaming: true,
-        timeSlice: 5_000, // 1 second
+        timeSlice: 1_000, // 1 second
         // whisperConfig: {
-        //     language: 'en',
-        // prompt : last text TODO: feedback audio into this
-        // },
-
-        removeSilence: true, // Setting this to true seems to return an empty audio clip
+        //     language: 'en',1
+        // removeSilence is practically useless for me. I will remove it myself in server
+        removeSilence: false, // Setting this to true seems to return an empty audio clip
     })
 
     return (
@@ -216,7 +194,7 @@ const LiveTranscriptApp = () => {
             {/* transcribed test also doens't make sense since it's only useful if the api itself is doing the transcription */}
             {/* <p>Transcribed Text: {transcript.text}</p> */}
             <p>Transcribed Text: {transcribedText}</p>
-            <p>Send Counter: {sendCounter}</p>
+            <p>Send Counter: {counterHook}</p>
             <button onClick={() => startRecording()}>Start</button>
             <button onClick={() => pauseRecording()}>Pause</button>
             <button onClick={() => stopRecording()}>Stop</button>
