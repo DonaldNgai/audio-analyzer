@@ -11,6 +11,7 @@ transcript_api_bp = Blueprint("transcript_api", __name__)
 CORS(transcript_api_bp)
 
 counter = 0
+useWhisper = False
 
 @transcript_api_bp.route("/")
 def index():
@@ -42,9 +43,10 @@ def transcribe_from_file():
     file.save(file.filename)
 
     audio_file = open(temp.name, "rb")
-    # transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    transcript = "hello"
-    # time.sleep(3000)
+    if (useWhisper):
+        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    else:
+        transcript = "  hello  "
     print (transcript)
     return {"message": transcript}
 
@@ -60,11 +62,15 @@ def transcribe_from_blob():
     filepath = "tmp/" + data.filename
     print(filepath)
     saveTempAudioFile(filepath, data)
-    os.remove(filepath)
-
     counter+=1
     
-    return {"message": "Hello WOrlds"}
+    if (useWhisper):
+        transcript = openai.Audio.transcribe("whisper-1", filepath)
+    else:
+        transcript = "  hello  " 
+    print (transcript)
+    os.remove(filepath)
+    return {"message": transcript}
 
 @transcript_api_bp.route('/livebase64', methods=['POST'])
 def transcribe_from_base64():
@@ -87,7 +93,12 @@ def transcribe_from_base64():
     
     counter+=1
     
-    return {"message": "Hello WOrlds"}
+    if (useWhisper):
+        transcript = openai.Audio.transcribe("whisper-1", filename)
+    else:
+        transcript = "  hello  "
+    print (transcript)
+    return {"message": transcript}
 
 
 def saveTempAudioFile(filepath, fileToSave):

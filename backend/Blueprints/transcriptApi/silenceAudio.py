@@ -85,18 +85,18 @@ for count, file in enumerate(files):
         wavPath = convertFlacToWav(file)
         files[count] = wavPath
         file = wavPath
-    visualizeWave(file)
+    # visualizeWave(file)
 
 for file in files:
     [Fs, x] = aIO.read_audio_file(file)
     segments = aS.silence_removal(x, 
                                  Fs, 
-                                 0.020, 
-                                 0.020, 
-                                 smooth_window=1.0, 
-                                 weight=0.3, 
-                                 plot=True)
-    u_segments=update_segments(file,segments, 5)
+                                 0.020, #Short Term Window Size
+                                 0.020, #Short Term Step Size
+                                 smooth_window=0.8, #Window in seconds used to smooth the SVM probabilistic sequence
+                                 weight=0.6, #a factor between 0 and 1 that specifies how "strict" the thresholding is
+                                 plot=False) #From documentation, only change window and weight? For conversations, smaller window and stronger weight
+    u_segments=update_segments(file,segments, 0) # Show all silences, regardless of silence length
     print(u_segments)
     if len(u_segments)>0:
         visualizeWave(file,u_segments)

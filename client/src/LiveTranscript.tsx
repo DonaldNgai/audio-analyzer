@@ -8,7 +8,7 @@ const LiveTranscriptApp = () => {
     const [audio, setAudio] = useState("");
     const [counterHook, updateCounter] = useState(0)
     const stateRef = useRef<number>(0);
-    const maxRuns = 1
+    const maxRuns = 2
 
     stateRef.current = counterHook;
 
@@ -42,7 +42,10 @@ const LiveTranscriptApp = () => {
                 body,
                 config,
             )
-            const { text } = await response.data['message']
+
+            const text = response.data.message.trim()
+
+            setTranscription((transcribedText) => transcribedText + " " + text)
             return {
                 blob,
                 text,
@@ -81,7 +84,10 @@ const LiveTranscriptApp = () => {
                 body,
                 config,
             )
-            const { text } = await response.data['message']
+
+            const text = response.data.message.trim()
+
+            setTranscription((transcribedText) => transcribedText + " " + text)
 
             return {
                 blob,
@@ -133,7 +139,7 @@ const LiveTranscriptApp = () => {
         // whisperConfig: {
         //     language: 'en',1
         // removeSilence is practically useless for me. I will remove it myself in server
-        removeSilence: false, // Setting this to true seems to return an empty audio clip
+        removeSilence: true,
     })
 
     return (
