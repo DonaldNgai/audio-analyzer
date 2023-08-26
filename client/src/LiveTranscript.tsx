@@ -5,84 +5,21 @@ const FLASK_ENDPOINT = process.env.REACT_APP_SERVER_ENDPOINT
 
 const LiveTranscriptApp = () => {
     const [transcribedText, setTranscription] = useState("")
+    const [audio, setAudio] = useState("");
     const [counterHook, updateCounter] = useState(0)
     const stateRef = useRef<number>(0);
+    const maxRuns = 1
 
     stateRef.current = counterHook;
 
-    const onTranscribe = async (blob: Blob) => {
+    const onLiveBase64 = async (blob: Blob) => {
 
-        console.log("onTranscripe")
-        console.log(blob)
+        if (stateRef.current < maxRuns) {
+            console.log(`onLiveBase64 ${stateRef.current + 1}`)
 
-        const base64 = await new Promise<string | ArrayBuffer | null>(
-            (resolve) => {
-                const reader = new FileReader()
-                reader.onloadend = () => resolve(reader.result)
-                reader.readAsDataURL(blob)
-            }
-        )
-        // const formData = new FormData();
-        // formData.append("file", JSON.stringify(base64));
-        // formData.append("model", "whisper-1");
-        const body = JSON.stringify({ file: base64, model: 'whisper-1' })
-        // console.log(audiofile)
-        const config = {
-            headers: {
-                'content-type': 'application/json',
-            }
-        };
+            const audioUrl = URL.createObjectURL(blob);
+            setAudio(audioUrl);
 
-        if (stateRef.current < 2) {
-
-            const response = await axios.post(
-                `${FLASK_ENDPOINT}/transcribe/live`,
-                body,
-                config,
-            )
-            const { text } = await response.data['message']
-        }
-        // const stream = response.data
-        // stream.on('data', (data: { [x: string]: any; }) => {
-        //     console.log(data)
-        //     const message = data["message"]
-        //     //     // const parsedJson = JSON.parse(response)
-        //     console.log(message)
-        //     setTranscription(transcribedText + " " + message)
-
-        // })
-
-        // stream.on('end', () => {
-        //     console.log("done")
-        // })
-        // .then(function (response) {
-        //     const message = response.data["message"]
-        //     // const parsedJson = JSON.parse(response)
-        //     console.log(message)
-        //     setTranscription(transcribedText + " " + message)
-        // })
-
-        var text = ""
-        // console.log(response)
-
-        return {
-            blob,
-            text,
-        }
-    }
-
-    const onLive = async (blob: Blob) => {
-
-
-        // console.log(blob)
-
-        console.log("counterHook")
-        console.log(counterHook)
-        console.log(`stateRef is ${stateRef.current}`)
-
-
-        if (stateRef.current < 2) {
-            console.log("onLive")
             const base64 = await new Promise<string | ArrayBuffer | null>(
                 (resolve) => {
                     const reader = new FileReader()
@@ -91,27 +28,65 @@ const LiveTranscriptApp = () => {
                 }
             )
 
-            // const formData = new FormData();
-            // formData.append("file", JSON.stringify(base64));
-            // formData.append("model", "whisper-1");
             const body = JSON.stringify({ file: base64, model: 'whisper-1' })
-            // console.log(audiofile)
             const config = {
                 headers: {
                     'content-type': 'application/json',
                 }
             };
 
-
-
             updateCounter(counterHook => counterHook + 1)
             console.log(stateRef.current)
-            // const response = await axios.post(
-            //     `${FLASK_ENDPOINT}/transcribe/live`,
-            //     body,
-            //     config,
-            // )
-            // const { text } = await response.data['message']
+            const response = await axios.post(
+                `${FLASK_ENDPOINT}/transcribe/livebase64`,
+                body,
+                config,
+            )
+            const { text } = await response.data['message']
+            return {
+                blob,
+                text,
+            }
+        }
+
+
+        return {
+            blob,
+        }
+    }
+
+    const onLiveBlob = async (blob: Blob) => {
+
+        if (stateRef.current < maxRuns) {
+            console.log(`onLiveBlob ${stateRef.current + 1}`)
+
+            const audioUrl = URL.createObjectURL(blob);
+            setAudio(audioUrl);
+
+            const body = new FormData();
+
+            body.append("file", blob);
+            body.append("model", "whisper-1");
+
+            const config = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                }
+            };
+
+            updateCounter(counterHook => counterHook + 1)
+
+            const response = await axios.post(
+                `${FLASK_ENDPOINT}/transcribe/liveblob`,
+                body,
+                config,
+            )
+            const { text } = await response.data['message']
+
+            return {
+                blob,
+                text,
+            }
         }
         // const stream = response.data
         // stream.on('data', (data: { [x: string]: any; }) => {
@@ -133,12 +108,10 @@ const LiveTranscriptApp = () => {
         //     setTranscription(transcribedText + " " + message)
         // })
 
-        var text = ""
         // console.log(response)
 
         return {
-            blob,
-            text,
+            blob
         }
     }
 
@@ -151,12 +124,12 @@ const LiveTranscriptApp = () => {
         autoTranscribe: false, // If this is false, onTranscribe is not called. But this needs to be true in order for onDataCallback to be called
         // callback to handle transcription with custom server
         // onTranscribe: onTranscribe,
-        onDataAvailable: onLive,
+        onDataAvailable: onLiveBase64,
         // Set this to false when we want live transcriptions. It will call onDataAvailable
         // customServer: "",
         apiKey: process.env.REACT_APP_OPENAI_API_KEY, // YOUR_OPEN_AI_TOKEN
         streaming: true,
-        timeSlice: 1_000, // 1 second
+        timeSlice: 4_000, // 1 second
         // whisperConfig: {
         //     language: 'en',1
         // removeSilence is practically useless for me. I will remove it myself in server
@@ -198,6 +171,14 @@ const LiveTranscriptApp = () => {
             <button onClick={() => startRecording()}>Start</button>
             <button onClick={() => pauseRecording()}>Pause</button>
             <button onClick={() => stopRecording()}>Stop</button>
+            {audio ? (
+                <div className="audio-container">
+                    <audio src={audio} controls></audio>
+                    <a download href={audio}>
+                        Download Recording
+                    </a>
+                </div>
+            ) : null}
         </div>
     )
 }

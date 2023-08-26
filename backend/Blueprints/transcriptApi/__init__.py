@@ -53,10 +53,29 @@ def transcribe_from_file():
     print (transcript)
     return {"message": transcript}
 
-@transcript_api_bp.route('/live', methods=['POST'])
+@transcript_api_bp.route('/liveblob', methods=['POST'])
 def transcribe_from_blob():
     global counter
-    print ("Live transcribing" + str(counter))
+    print ("Live Blob transcribing " + str(counter))
+
+    if "file" not in request.files:
+        return redirect(request.url)
+
+    print ("jello")
+    data = request.files['file']
+    print (data)
+    filename = "".join(["./file",str(counter),".mpeg"])
+    print(filename)
+    data.save(filename)
+
+    counter+=1
+    
+    return {"message": "Hello WOrlds"}
+
+@transcript_api_bp.route('/livebase64', methods=['POST'])
+def transcribe_from_base64():
+    global counter
+    print ("Live Base 64 transcribing" + str(counter))
 
     # print (request.get_json())
     # if "file" not in request.files:
